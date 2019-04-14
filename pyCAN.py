@@ -19,7 +19,7 @@ db = cantools.database.load_file('2018CAR.dbc')
 
 #Specify the can bus in use either virtual (Vcan0) or vector (for the VN1610 used by the WFE team)
 #can_bus = can.interface.Bus(bustype='vector', appname = 'CANalyzer', channel = 0, bitrate=250000)
-#can_bus = can.interface.Bus('vcan0', bustype='socketcan') 
+can_bus = can.interface.Bus('vcan0', bustype='socketcan') 
 
 #------------------------------------------------------------------------------------------------
 
