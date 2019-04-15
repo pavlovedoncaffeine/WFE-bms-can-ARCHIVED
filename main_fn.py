@@ -34,7 +34,8 @@ import pyLAN	#LAN functions to control the Bloomy Battery Simulator
 import pyUART	#UART function to reset BMU (in progress)
 
 
-
+# why use a dictionary instead of simply just an array, you muppet?
+CAN_msg_dict = {0 : 'Ignore', 1 : 'BMU_DTC', 2 : 'BMU_CellVoltage', 3 : 'BMU_CellTemp', 4 : 'PDU_ChannelStatus'}
 
 
 
