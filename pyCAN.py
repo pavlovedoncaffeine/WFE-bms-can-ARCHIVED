@@ -6,7 +6,7 @@ import sys
 import csv
 import cantools
 import pprint
-#import can
+import can
 
 #------------------------------------------------------------------------------------------------
 
@@ -18,16 +18,17 @@ db = cantools.database.load_file('2018CAR.dbc')
 #------------------------------------------------------------------------------------------------
 
 #Specify the can bus in use either virtual (Vcan0) or vector (for the VN1610 used by the WFE team)
-can_bus = can.interface.Bus(bustype='vector', appname = 'CANalyzer', channel = 0, bitrate=250000)
+#can_bus = can.interface.Bus(bustype='vector', appname = 'CANalyzer', channel = 0, bitrate=250000)
 #can_bus = can.interface.Bus('vcan0', bustype='socketcan') 
+can_bus = can.interface.Bus('testing', bustype='virtual')
 
 #------------------------------------------------------------------------------------------------
 
 #printobj = pprint.PrettyPrinter(indent=6)
-filename = "DTC.csv"
+filename = 'DTC.csv'
 DTCFile = open(filename, newline='\n')
-readDTC = csv.reader(DTCfile) #readDTC is a 2D array with all CSV elements and can be iterated through
-DTCfile.close()
+readDTC = csv.reader(DTCFile) #readDTC is a 2D array with all CSV elements and can be iterated through
+DTCFile.close()
 
 #------------------------------------------------------------------------------------------------
 
@@ -38,10 +39,11 @@ temp_dict = {"empty" : 0}
 pdu_dict = {"empty" : 0} 
 
 #cantools.database.can.Message class objects for both DTC codes and for Cell voltages
-DTC_msg = get_message_by_name("BMU_DTC")
-volts_msg = get_message_by_name("BMU_CellVoltage")
-temp_msg = get_message_by_name("BMU_CellTemp")
-pdu_msg = get_message_by_name("PDU_ChannelStatus")
+DTC_msg = db.get_message_by_name("BMU_DTC")
+volts_msg = db.get_message_by_name("BMU_CellVoltage")
+temp_msg = db.get_message_by_name("BMU_CellTemp")
+pdu_msg = db.get_message_by_name("PDU_ChannelStatus")
+
 #------------------------------------------------------------------------------------------------
 
 #Listing all functions below:
@@ -51,16 +53,16 @@ pdu_msg = get_message_by_name("PDU_ChannelStatus")
 # dtc_dict contains signals for the BMU_DTC message. If dtc_dict is empty there's no DTC code on the CAN.
 def checkDTC():
     try:
-        if (len(dtc_dict) or ('empty' in dtc_dict)) <= 0:
+        if (len(dtc_dict) or ('empty' in dtc_dict) <= 0):
             #dict empty, ie: no dtc codes
             for i in range(1,5):
                 readDTC[i][5] = 'CellNumber'
-            return false; 
+            return false
 
-        else if ('DTC_CODE' in dtc_dict):
+        elif ('DTC_CODE' in dtc_dict):
             for i in range(1,5):
                 # Compare DTC code in canbus with the DTC.csv file's first 4 lines
-                if (dtc_dict["DTC_CODE"] == readDTC[i][0] && dtc_dict["DTC_Severity"] == readDTC[i][3]):
+                if (dtc_dict["DTC_CODE"] == readDTC[i][0] and dtc_dict["DTC_Severity"] == readDTC[i][3]):
                     readDTC[i][5] = dtc_dict["DTC_Data"] # change DTC 2D array with relevant cell number for 
                     
                     # below lines of code allow you to print the DTC code to terminal (irrelevant for tests)
@@ -87,19 +89,19 @@ def checkDTC():
 
 # volts_dict contains signals for VoltageCellMuxSelect 
 #   which in turn contain voltages for groups of 3 cells each
-def checkVolts():
+#def checkVolts():
 
 
 #xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo
 
 #temp_dict contains signals for TempCellMuxSelect which in turn contains temps for groups of 3 cells each
-def checkTemps(): 
+#def checkTemps():
 
 
 #xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo
 
 #pdu_dict contains signals for blown fuses etc (I think?)
-def checkPDUStatus():
+#def checkPDUStatus():
 
 
 #xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo
@@ -136,21 +138,21 @@ def read_CAN_msg():
         return 1
 
     #frame id for BMU_CellVoltage = 0x18800401
-    else if (msg.arbitration_id == volts_msg.frame_id):
+    elif (msg.arbitration_id == volts_msg.frame_id):
         print("Recevied msg.frame_id matches expected BMU_CellVoltage's frame id \n")
         volts_dict = db.decode_message(msg.arbitration_id, msg.data)
         #checkVolts()
         return 2
 
     #frame id for BMU_CellTemp = 0x18c00401
-    else if (msg.arbitration_id == temp_msg.frame_id):
+    elif (msg.arbitration_id == temp_msg.frame_id):
         print("Recevied msg.frame_id matches expected BMU_CellTemp's frame id \n")
         temp_dict = db.decode_message(msg.arbitration_id, msg.data)
         #checkTemps()
         return 3
 
     #frame id for PDU_ChannelStatus = 0x6
-    else if (msg.arbitration_id == pdu_msg.frame_id):
+    elif (msg.arbitration_id == pdu_msg.frame_id):
         print("Recevied msg.frame_id matches expected PDU_ChannelStatus's frame id \n")
         pdu_dict = db.decode_message(msg.arbitration_id, msg.data)
         #checkPDUStatus()
@@ -163,7 +165,7 @@ def read_CAN_msg():
 #xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxo
 
 
-# The following lines are used for module testing:
+# The following lines acn be used for module testing:
 # i)    print_all_DTC()
 # ii)   read_CAN_msg()
 
