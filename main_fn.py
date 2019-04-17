@@ -1,4 +1,4 @@
-# To-Do
+spo# To-Do
 
 # pyCAN: Edit canbus you're reading from (ask Alex for the correct Bus or check once connected to the VN1610) 
 #		 Fill in code for checking DTC codes against the *.csv file
@@ -19,7 +19,7 @@
 #		Change cell channel voltage to under and overvolt scenarios each, and ensure DTC codes are displayed
 #		Reset bloomy after each cell volt check; repeat for 12 cell channels
 
-
+/
 # Waterloo Forumla Electric 
 
 # Main function to run python scripts to use 
@@ -27,7 +27,7 @@
 
 import sys
 import csv
-import pprint
+#import pprint #do you really need this import??
 
 import pyCAN	#CAN bus functions for DTC, Cell Voltages, Cell Temps, and PDU status (fuses?)
 import pyLAN	#LAN functions to control the Bloomy Battery Simulator

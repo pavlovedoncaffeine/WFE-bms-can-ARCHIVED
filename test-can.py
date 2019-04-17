@@ -5,22 +5,24 @@ import can
 from pprint import pprint
 
 db = cantools.database.load_file('2018CAR.dbc')
+can_bus = can.interface.Bus('testing', bustype='virtual')
 #db is an object of class cantools.database.can.Database()
+cellV_mux = db.get_message_by_name("BMU_CellVoltage")
+
 
 #msg = can_bus.recv()
-#cellV_mux = db.decode_message(msg.arbitration_id, msg.data)
-cellV_mux = db.get_message_by_name("BMU_CellVoltage")
-cellT_mux = db.get_message_by_name("BMU_CellTemp")
+#decode to the relecant frame_id
+#cellV_mux = db.decode_message(cellV_mux.frame_id, msg.data)
 
+
+cellT_mux = db.get_message_by_name("BMU_CellTemp")
 #print("Message is an extended frame: ", str(cellV_mux.is_extended_frame))
 #print("Message is muxxed: ", str(cellV_mux.is_multiplexed()))
 
 cellV_dict = cellV_mux.signal_tree[0].get('VoltageCellMuxSelect') # dictionary with mux signal key-value pairs
-
-for s0 in cellV_dict.keys():
-	print(cellV_dict[s0])
-# printing and breaking down the mux signal into usable lists of three each
-
+pprint(cellV_dict.values())
+# printing and breaking down the mux signal into usable lists of three eachpprint(cellV_mux.)
+#pprint(cellV_dict)
 
 #------------------------------------------------------------------------------------
 #print("\n Num of msgs: " + str(len(db.messages)) + "\n")
